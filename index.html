@@ -4,637 +4,249 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MIDOUNOU — Application Étudiant 📱</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ibkZAVn-s6ZPc66xRbjuhAWQwPjpB66L3q80Q-qHzfwQE56BQb8SlE3p1ETnQcd0l0qdCr8IqWqgw1i4jdb3NMeAMtEGFTLecr6g6Bv-BAqPrfynPBH1NlffkkJ-N4vjN0iY8umy6PQYnZvtPJx0_Z8NAMtEZ3BZsRDQUA9AyZVvD8M9QQ_reE_2786NgqjScp1pI_MuLC8mGuT4pL3j4Q0BnOnpWrZ457p74A2T--4YWgj15dZLHbbkTE7LRarbsCVTBf2Mv9-lu-mZR-Idbu2x0XzsLFKPj5YBzQrr4BLVGvCFCZB7s3ROItURRUaQ" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
-      --brun: #5A3A22; 
-      --creme: #F5EBD0; 
-      --orange: #D97706; 
-      --orange-light: #FFFBEB;
-      --vert: #10B981; 
-      --noir: #1F2937; 
-      --brun-clair: #8A6444; 
-      --off-white: #FDFBF7;
-      --gris-clair: #E5E7EB; 
-      --gris-fond: #F3F4F6;
-      --rouge: #EF4444;
-      --shadow-sm: 0 2px 4px rgba(90, 58, 34, 0.04);
-      --shadow-md: 0 4px 12px rgba(90, 58, 34, 0.08);
-      --shadow-lg: 0 10px 25px rgba(90, 58, 34, 0.12);
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --transition: all 0.25s ease;
+      --brun: #5A3A22; --creme: #F5EBD0; --orange: #D97706; --vert: #6B8E5A;
+      --noir: #202D2D; --brun-clair: #8a6444; --off-white: #FBF7EE;
+      --gris-clair: #ECE2CA; --rouge: #C0392B;
     }
-
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: 'Inter', sans-serif; 
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body { 
-      background-color: var(--gris-fond); 
-      color: var(--noir); 
-      padding-bottom: 90px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    h1, h2, h3, h4, .poppins { 
-      font-family: 'Poppins', sans-serif; 
-      color: var(--brun);
-    }
-
-    /* Conteneur principal adaptatif (Mobile vs PC) */
-    .app-container {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      background: var(--off-white);
-      min-height: 100vh;
-      box-shadow: var(--shadow-lg);
-      position: relative;
-    }
-
-    @media (max-width: 800px) {
-      .app-container {
-        box-shadow: none;
-      }
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--off-white); color: var(--noir); padding-bottom: 90px; }
+    h1, h2, h3, h4, .poppins { font-family: 'Poppins', sans-serif; }
 
     /* Auth & Formulaires */
-    #auth-screen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      background: linear-gradient(135deg, var(--creme) 0%, var(--off-white) 100%);
-    }
-
-    .auth-container { 
-      width: 100%;
-      max-width: 440px; 
-      padding: 40px 32px; 
-      background: white; 
-      border-radius: var(--radius-lg); 
-      box-shadow: var(--shadow-lg);
-      border: 1px solid rgba(90, 58, 34, 0.06);
-    }
-
-    .auth-logo { 
-      text-align: center; 
-      font-size: 42px; 
-      font-weight: 800; 
-      color: var(--brun); 
-      margin-bottom: 8px; 
-      font-family: 'Poppins', sans-serif;
-      letter-spacing: -1px;
-    }
-
-    .form-group { 
-      margin-bottom: 20px; 
-    }
-
-    .form-group label { 
-      display: block; 
-      font-weight: 600; 
-      font-size: 14px; 
-      margin-bottom: 8px; 
-      color: var(--brun); 
-    }
-
-    .form-group input, .form-group select { 
-      width: 100%; 
-      padding: 14px 16px; 
-      border: 1.5px solid var(--gris-clair); 
-      border-radius: var(--radius-md); 
-      font-size: 15px; 
-      background: var(--off-white); 
-      color: var(--noir);
-      transition: var(--transition);
-      outline: none;
-    }
-
-    .form-group input:focus, .form-group select:focus {
-      border-color: var(--orange);
-      background: white;
-      box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
-    }
+    .auth-container { max-width: 420px; margin: 40px auto; padding: 32px 24px; background: white; border-radius: 20px; border: 1px solid var(--gris-clair); }
+    .auth-logo { text-align: center; font-size: 36px; font-weight: 800; color: var(--brun); margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--brun); }
+    .form-group input, .form-group select { width: 100%; padding: 14px; border: 1px solid var(--gris-clair); border-radius: 12px; font-size: 15px; background: var(--off-white); }
     
     /* Boutons */
-    .btn { 
-      display: block; 
-      width: 100%; 
-      padding: 16px; 
-      background: var(--brun); 
-      color: white; 
-      border: none; 
-      border-radius: var(--radius-md); 
-      font-size: 16px; 
-      font-weight: 600; 
-      cursor: pointer; 
-      text-align: center; 
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-      opacity: 0.95;
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    .btn-orange { 
-      background: var(--orange); 
-    }
+    .btn { display: block; width: 100%; padding: 16px; background: var(--brun); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; }
+    .btn-orange { background: var(--orange); }
 
     /* Layout et sections */
-    .header-bar { 
-      background: white; 
-      color: var(--brun); 
-      padding: 20px 24px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      position: sticky; 
-      top: 0; 
-      z-index: 100; 
-      border-bottom: 1px solid rgba(90, 58, 34, 0.08);
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-    }
+    .header-bar { background: var(--brun); color: white; padding: 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .app-section { display: none; padding: 20px 16px; max-width: 600px; margin: 0 auto; }
+    .app-section.active { display: block; }
 
-    .app-section { 
-      display: none; 
-      padding: 24px 24px; 
-    }
-
-    .app-section.active { 
-      display: block; 
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cartes & Bannières */
-    .banner-sub { 
-      background: linear-gradient(135deg, var(--brun) 0%, var(--brun-clair) 100%); 
-      color: var(--creme); 
-      padding: 28px; 
-      border-radius: var(--radius-lg); 
-      margin-bottom: 24px; 
-      box-shadow: var(--shadow-md);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .banner-sub::after {
-      content: '';
-      position: absolute;
-      right: -20px;
-      bottom: -20px;
-      width: 120px;
-      height: 120px;
-      background: rgba(245, 235, 208, 0.05);
-      border-radius: 50%;
-    }
-
-    .banner-sub h3 {
-      color: white;
-      font-size: 22px;
-      margin-bottom: 6px;
-    }
-
-    .countdown-box { 
-      background: white; 
-      border: 1px solid rgba(217, 119, 6, 0.15); 
-      border-left: 5px solid var(--orange); 
-      padding: 16px 20px; 
-      border-radius: var(--radius-md); 
-      text-align: center; 
-      margin-bottom: 28px; 
-      font-weight: 600; 
-      box-shadow: var(--shadow-sm);
-      font-size: 15px;
-    }
-
-    .countdown-box span { 
-      color: var(--orange); 
-      font-weight: 800; 
-      font-size: 18px; 
-    }
-
-    .section-title { 
-      font-size: 18px; 
-      font-weight: 700; 
-      margin: 28px 0 16px 0; 
-      color: var(--brun); 
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* Cartes */
+    .banner-sub { background: linear-gradient(135deg, var(--brun) 0%, var(--brun-clair) 100%); color: var(--creme); padding: 24px; border-radius: 18px; margin-bottom: 20px; }
+    .countdown-box { background: white; border: 1px solid var(--gris-clair); border-left: 5px solid var(--orange); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 24px; font-weight: 600; }
+    .countdown-box span { color: var(--orange); font-weight: 800; font-size: 17px; }
+    .section-title { font-size: 18px; font-weight: 700; margin: 24px 0 14px 0; color: var(--brun); }
     
     /* Scroll horizontal pour formules */
-    .scroll-x { 
-      display: flex; 
-      gap: 16px; 
-      overflow-x: auto; 
-      padding: 4px 4px 16px 4px; 
-      scrollbar-width: none;
-    }
-
-    .scroll-x::-webkit-scrollbar {
-      display: none;
-    }
-
-    .formula-card { 
-      min-width: 240px; 
-      max-width: 240px;
-      background: white; 
-      border: 1px solid rgba(90, 58, 34, 0.08); 
-      border-radius: var(--radius-md); 
-      padding: 20px; 
-      cursor: pointer; 
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .formula-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--orange);
-    }
+    .scroll-x { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; }
+    .formula-card { min-width: 220px; background: white; border: 1px solid var(--gris-clair); border-radius: 16px; padding: 18px; cursor: pointer; }
 
     /* Grid Repas */
-    .meals-grid { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 16px; 
-      margin-bottom: 24px; 
-    }
-
-    @media (max-width: 480px) {
-      .meals-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .meal-card { 
-      background: white; 
-      border: 1px solid rgba(90, 58, 34, 0.08); 
-      border-radius: var(--radius-md); 
-      overflow: hidden; 
-      cursor: pointer; 
-      position: relative; 
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .meal-card:hover:not(.disabled) {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .meal-card.selected { 
-      border: 2px solid var(--orange); 
-      background: var(--orange-light); 
-      box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.15);
-    }
-
-    .meal-card.disabled { 
-      opacity: 0.5; 
-      cursor: not-allowed; 
-      filter: grayscale(1);
-    }
-
-    .meal-img-wrapper { 
-      height: 140px; 
-      background: var(--gris-fond); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 42px; 
-      background-size: cover; 
-      background-position: center; 
-    }
-
-    .meal-details-box { 
-      padding: 16px; 
-    }
+    .meals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .meal-card { background: white; border: 1px solid var(--gris-clair); border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; }
+    .meal-card.selected { border: 2px solid var(--orange); background: #FFFBEB; }
+    .meal-card.disabled { opacity: 0.6; cursor: not-allowed; }
+    .meal-img-wrapper { height: 110px; background: #F3F4F6; display: flex; align-items: center; justify-content: center; font-size: 36px; background-size: cover; background-position: center; }
+    .meal-details-box { padding: 12px; }
 
     /* Footer Nav */
-    .nav-bar { 
-      position: fixed; 
-      bottom: 0; 
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 800px;
-      height: 80px; 
-      background: rgba(255, 255, 255, 0.96); 
-      border-top: 1px solid rgba(90, 58, 34, 0.08); 
-      display: flex; 
-      justify-content: space-around; 
-      align-items: center; 
-      z-index: 200; 
-      backdrop-filter: blur(10px);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .nav-item { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      color: var(--brun-clair); 
-      font-size: 11px; 
-      font-weight: 600; 
-      cursor: pointer; 
-      opacity: 0.6; 
-      transition: var(--transition);
-      flex: 1;
-      padding: 8px 0;
-    }
-
-    .nav-item:hover {
-      opacity: 1;
-      color: var(--orange);
-    }
-
-    .nav-item.active { 
-      color: var(--orange); 
-      opacity: 1; 
-    }
-
-    .nav-item svg { 
-      width: 24px; 
-      height: 24px; 
-      margin-bottom: 5px; 
-      transition: var(--transition);
-    }
-
-    .nav-item.active svg {
-      transform: scale(1.1);
-    }
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: white; border-top: 1px solid var(--gris-clair); display: flex; justify-content: space-around; align-items: center; z-index: 200; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--brun-clair); font-size: 11px; font-weight: 600; cursor: pointer; opacity: 0.7; }
+    .nav-item.active { color: var(--orange); opacity: 1; }
+    .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
 
     /* Bottom Sheet */
-    .bottom-sheet { 
-      position: fixed; 
-      bottom: -100%; 
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 800px;
-      background: white; 
-      border-top-left-radius: var(--radius-lg); 
-      border-top-right-radius: var(--radius-lg); 
-      z-index: 300; 
-      padding: 32px 24px; 
-      max-height: 85%; 
-      overflow-y: auto; 
-      transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
-    }
-
-    .bottom-sheet.open { 
-      bottom: 0; 
-    }
-
-    .overlay { 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      right: 0; 
-      bottom: 0; 
-      background: rgba(32, 45, 45, 0.6); 
-      backdrop-filter: blur(4px);
-      z-index: 250; 
-      display: none; 
-      animation: fadeIn 0.3s ease;
-    }
-
-    .overlay.open { 
-      display: block; 
-    }
+    .bottom-sheet { position: fixed; bottom: -100%; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 300; padding: 28px 24px; max-height: 85%; overflow-y: auto; transition: bottom 0.3s; }
+    .bottom-sheet.open { bottom: 0; }
+    .overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 250; display: none; }
+    .overlay.open { display: block; }
     
     /* Historique */
-    .order-item { 
-      background: white; 
-      border: 1px solid rgba(90, 58, 34, 0.08); 
-      border-radius: var(--radius-md); 
-      padding: 18px; 
-      margin-bottom: 16px; 
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition);
-    }
-
-    .order-item:hover {
-      box-shadow: var(--shadow-md);
-    }
-
-    .status-pill { 
-      float: right; 
-      padding: 6px 12px; 
-      border-radius: 20px; 
-      font-size: 11px; 
-      font-weight: 700; 
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
+    .order-item { background: white; border: 1px solid var(--gris-clair); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+    .status-pill { float: right; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
     .status-attente { background: #FEF3C7; color: #D97706; }
     .status-confirme { background: #D1FAE5; color: #059669; }
     .status-livre { background: #DBEAFE; color: #2563EB; }
     .status-annule { background: #FEE2E2; color: #DC2626; }
-
-    /* Badges */
-    .user-badge {
-      box-shadow: var(--shadow-sm);
-    }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <div id="auth-screen">
-      <div class="auth-container" id="login-box">
-        <div class="auth-logo">MIDOUNOU</div>
-        <h3 style="margin-bottom:24px; text-align:center; font-weight: 600;">Connexion Étudiant</h3>
-        <div class="form-group">
-          <label>Adresse Email</label>
-          <input type="email" id="login-email" placeholder="etudiant@uac.bj">
-        </div>
-        <div class="form-group">
-          <label>Mot de passe</label>
-          <input type="password" id="login-pass" placeholder="••••••••">
-        </div>
-        <button class="btn btn-orange" onclick="handleLogin()" style="margin-bottom:20px;">Se connecter</button>
-        <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Nouveau ? <a href="#" onclick="toggleAuthBoxes(false)" style="color:var(--orange); font-weight:600; text-decoration: none;">Créer un compte</a></p>
+  <!-- Écrans d'authentification -->
+  <div id="auth-screen">
+    <div class="auth-container" id="login-box">
+      <div class="auth-logo">MIDOUNOU</div>
+      <h3 style="margin-bottom:18px; text-align:center; color: var(--brun);">Connexion Étudiant</h3>
+      <div class="form-group">
+        <label>Adresse Email</label>
+        <input type="email" id="login-email" placeholder="etudiant@uac.bj">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-orange" onclick="handleLogin()" style="margin-bottom:16px;">Se connecter</button>
+      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Nouveau ? <a href="#" onclick="toggleAuthBoxes(false)" style="color:var(--orange); font-weight:600; text-decoration: none;">Créer un compte</a></p>
+    </div>
+
+    <div class="auth-container" id="register-box" style="display: none;">
+      <div class="auth-logo">MIDOUNOU</div>
+      <h3 style="margin-bottom:18px; text-align:center; color: var(--brun);">Inscription</h3>
+      <div class="form-group">
+        <label>Nom complet</label>
+        <input type="text" id="reg-name" placeholder="Ex: Jean Houndegla">
+      </div>
+      <div class="form-group">
+        <label>Adresse Email</label>
+        <input type="email" id="reg-email" placeholder="etudiant@uac.bj">
+      </div>
+      <div class="form-group">
+        <label>Numéro de téléphone</label>
+        <input type="text" id="reg-phone" placeholder="Ex: 61000000">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="reg-pass" placeholder="Minimum 6 caractères">
+      </div>
+      <button class="btn" onclick="handleRegister()" style="margin-bottom:16px;">S'inscrire</button>
+      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Déjà inscrit ? <a href="#" onclick="toggleAuthBoxes(true)" style="color:var(--brun); font-weight:600; text-decoration: none;">Se connecter</a></p>
+    </div>
+  </div>
+
+  <!-- Interface principale de l'application -->
+  <div id="app-screen" style="display: none;">
+    <div class="header-bar">
+      <div class="logo" style="font-weight: 800; font-size: 22px;">MIDOUNOU</div>
+      <div class="user-badge" id="header-user-plan" style="background: var(--orange); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;">Formule : Aucun</div>
+    </div>
+
+    <!-- Tab Accueil -->
+    <div id="tab-accueil" class="app-section active">
+      <div class="banner-sub">
+        <h3 id="welcome-name">Salut l'Étudiant 👋</h3>
+        <p style="font-size: 14px; margin-top:4px; opacity: 0.9;" id="welcome-plan-desc">Abonnement actif : Aucun. Choisis une formule pour économiser !</p>
       </div>
 
-      <div class="auth-container" id="register-box" style="display: none;">
-        <div class="auth-logo">MIDOUNOU</div>
-        <h3 style="margin-bottom:24px; text-align:center; font-weight: 600;">Inscription</h3>
-        <div class="form-group">
-          <label>Nom complet</label>
-          <input type="text" id="reg-name" placeholder="Ex: Jean Houndegla">
-        </div>
-        <div class="form-group">
-          <label>Adresse Email</label>
-          <input type="email" id="reg-email" placeholder="etudiant@uac.bj">
-        </div>
-        <div class="form-group">
-          <label>Numéro de téléphone</label>
-          <input type="text" id="reg-phone" placeholder="Ex: 61000000">
-        </div>
-        <div class="form-group">
-          <label>Mot de passe</label>
-          <input type="password" id="reg-pass" placeholder="Minimum 6 caractères">
-        </div>
-        <button class="btn" onclick="handleRegister()" style="margin-bottom:20px;">S'inscrire</button>
-        <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Déjà inscrit ? <a href="#" onclick="toggleAuthBoxes(true)" style="color:var(--brun); font-weight:600; text-decoration: none;">Se connecter</a></p>
+      <div class="countdown-box" id="global-timer-banner">
+        ⏳ Clôture des commandes dans : <span id="countdown-timer">00h 00m 00s</span>
+      </div>
+
+      <div class="section-title">☀️ Aperçu du Menu du Jour</div>
+      <div style="background:white; border:1px solid var(--gris-clair); padding:16px; border-radius:16px;">
+        <p>🍽️ <strong>Déjeuner :</strong> <span id="preview-dejeuner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
+        <p style="margin-top:10px;">🍽️ <strong>Dîner :</strong> <span id="preview-diner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
+      </div>
+
+      <div class="section-title">💼 Nos Formules Campus Officielles</div>
+      <div class="scroll-x" id="formulas-container-home">
+        <!-- Généré dynamiquement depuis la config admin -->
       </div>
     </div>
 
-    <div id="app-screen" style="display: none;">
-      <div class="header-bar">
-        <div class="logo" style="font-weight: 800; font-size: 24px; letter-spacing: -0.5px;">MIDOUNOU</div>
-        <div class="user-badge" id="header-user-plan" style="background: var(--orange); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Formule : Aucun</div>
+    <!-- Tab Commander -->
+    <div id="tab-commander" class="app-section">
+      <div id="closed-order-alert" style="display:none; background:#FEE2E2; border:1px solid var(--rouge); color:var(--rouge); padding:14px; border-radius:12px; margin-bottom:16px; font-weight:600; text-align:center;">
+        🛑 Les commandes sont actuellement clôturées. Revenez pendant la fenêtre autorisée.
       </div>
 
-      <div id="tab-accueil" class="app-section active">
-        <div class="banner-sub">
-          <h3 id="welcome-name">Salut l'Étudiant 👋</h3>
-          <p style="font-size: 14px; margin-top:4px; opacity: 0.9;" id="welcome-plan-desc">Abonnement actif : Aucun. Choisis une formule pour économiser !</p>
-        </div>
-
-        <div class="countdown-box" id="global-timer-banner">
-          ⏳ Clôture des commandes dans : <span id="countdown-timer">00h 00m 00s</span>
-        </div>
-
-        <div class="section-title">☀️ Aperçu du Menu du Jour</div>
-        <div style="background:white; border:1px solid rgba(90, 58, 34, 0.08); padding:20px; border-radius:var(--radius-md); box-shadow: var(--shadow-sm);">
-          <p style="font-size: 15px;">🍽️ <strong style="color: var(--brun);">Déjeuner :</strong> <span id="preview-dejeuner" style="color: var(--brun-clair); margin-left: 6px;">Aucun plat configuré</span></p>
-          <div style="height: 1px; background: var(--gris-clair); margin: 14px 0;"></div>
-          <p style="font-size: 15px;">🍽️ <strong style="color: var(--brun);">Dîner :</strong> <span id="preview-diner" style="color: var(--brun-clair); margin-left: 6px;">Aucun plat configuré</span></p>
-        </div>
-
-        <div class="section-title">💼 Nos Formules Campus Officielles</div>
-        <div class="scroll-x" id="formulas-container-home">
-          </div>
+      <div class="form-group">
+        <label>Sélecteur de Formule de commande</label>
+        <select id="order-formula-select" onchange="recalcTotal()">
+          <option value="À la demande">À la demande (Tarif normal)</option>
+        </select>
       </div>
 
-      <div id="tab-commander" class="app-section">
-        <div id="closed-order-alert" style="display:none; background:#FEE2E2; border:1px solid var(--rouge); color:var(--rouge); padding:16px; border-radius:var(--radius-md); margin-bottom:20px; font-weight:600; text-align:center; box-shadow: var(--shadow-sm);">
-          🛑 Les commandes sont actuellement clôturées. Revenez pendant la fenêtre autorisée.
-        </div>
+      <div class="form-group">
+        <label>Lieu de livraison</label>
+        <select id="order-site-select">
+          <!-- Peuplté dynamiquement -->
+        </select>
+      </div>
 
+      <div class="section-title">☀️ Choisissez votre Déjeuner</div>
+      <div class="meals-grid" id="grid-dejeuner"></div>
+
+      <div class="section-title">🌙 Choisissez votre Dîner</div>
+      <div class="meals-grid" id="grid-diner"></div>
+
+      <div style="background:white; padding:20px; border:1px solid var(--gris-clair); border-radius:16px; margin-top:24px; text-align:center;">
+        <div style="font-size:18px; font-weight:700; margin-bottom:14px;">Total à payer : <span id="order-total-display" style="color:var(--orange); font-size:24px;">0</span> FCFA</div>
+        <button class="btn btn-orange" id="btn-trigger-payment" onclick="openPaymentSheet()">🛒 Procéder au paiement Mobile Money</button>
+      </div>
+    </div>
+
+    <!-- Tab Formules -->
+    <div id="tab-formules" class="app-section">
+      <div class="section-title">Souscription aux Formules d'Abonnements</div>
+      <div id="formulas-container-full">
+        <!-- Généré dynamiquement -->
+      </div>
+    </div>
+
+    <!-- Tab Historique -->
+    <div id="tab-historique" class="app-section">
+      <div style="display:flex; justify-content:space-between; background:var(--brun); color:white; padding:16px; border-radius:14px; margin-bottom:20px; text-align:center; font-size:13px;">
+        <div><strong id="hist-stat-count" style="font-size:18px; color:var(--creme);">0</strong><br>Commandes</div>
+        <div style="border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); padding: 0 16px;"><strong id="hist-stat-spent" style="font-size:18px; color:var(--creme);">0 F</strong><br>Dépensé</div>
+        <div><strong>Campus</strong><br>Relais</div>
+      </div>
+      <div class="section-title">Mes Commandes Passées</div>
+      <div id="history-list"></div>
+    </div>
+
+    <!-- Tab Profil -->
+    <div id="tab-profil" class="app-section">
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="width:80px; height:80px; background:var(--creme); border-radius:50%; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; font-size:36px;">🎓</div>
+        <h2 id="profile-display-name" style="color:var(--brun);">Chargement...</h2>
+        <p id="profile-display-email" style="font-size:14px; color:var(--brun-clair); margin-top:2px;">...</p>
+      </div>
+      <div style="background:white; border:1px solid var(--gris-clair); padding:20px; border-radius:16px;">
         <div class="form-group">
-          <label>Sélecteur de Formule de commande</label>
-          <select id="order-formula-select" onchange="recalcTotal()">
-            <option value="À la demande">À la demande (Tarif normal)</option>
-          </select>
+          <label>Mon numéro Mobile Money</label>
+          <input type="text" id="profile-momo" placeholder="Ex: +229 61XX">
         </div>
-
-        <div class="form-group">
-          <label>Lieu de livraison</label>
-          <select id="order-site-select">
-            </select>
-        </div>
-
-        <div class="section-title">☀️ Choisissez votre Déjeuner</div>
-        <div class="meals-grid" id="grid-dejeuner"></div>
-
-        <div class="section-title">🌙 Choisissez votre Dîner</div>
-        <div class="meals-grid" id="grid-diner"></div>
-
-        <div style="background:white; padding:24px; border:1px solid rgba(90, 58, 34, 0.08); border-radius:var(--radius-lg); margin-top:32px; text-align:center; box-shadow: var(--shadow-md);">
-          <div style="font-size:16px; font-weight:600; margin-bottom:8px; color: var(--brun-clair);">Total à payer</div>
-          <div style="font-size:32px; font-weight:800; margin-bottom:18px; color:var(--orange); font-family: 'Poppins';"><span id="order-total-display">0</span> <span style="font-size: 18px; font-weight:700;">FCFA</span></div>
-          <button class="btn btn-orange" id="btn-trigger-payment" onclick="openPaymentSheet()">🛒 Procéder au paiement Mobile Money</button>
-        </div>
+        <button class="btn btn-orange" onclick="updateMomoNumber()" style="margin-bottom:12px;">💾 Mettre à jour mon profil</button>
+        <button class="btn" onclick="handleLogout()" style="background:#EF4444;">Déconnexion</button>
       </div>
+    </div>
 
-      <div id="tab-formules" class="app-section">
-        <div class="section-title">Souscription aux Formules d'Abonnements</div>
-        <div id="formulas-container-full">
-          </div>
-      </div>
+    <!-- Navigation -->
+    <div class="nav-bar">
+      <div class="nav-item active" id="nav-accueil" onclick="switchTab('accueil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Accueil</div>
+      <div class="nav-item" id="nav-commander" onclick="switchTab('commander')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.46 3.89 3.42 4.31V22h2v-8.69c1.96-.42 3.42-2.19 3.42-4.31V2zm6-6v8h1.91v11h2V3c-2.11 0-3.91 1.63-3.91 3z"/></svg>Commander</div>
+      <div class="nav-item" id="nav-formules" onclick="switchTab('formules')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>Abonnement</div>
+      <div class="nav-item" id="nav-historique" onclick="switchTab('historique')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Historique</div>
+      <div class="nav-item" id="nav-profil" onclick="switchTab('profil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Mon Profil</div>
+    </div>
 
-      <div id="tab-historique" class="app-section">
-        <div style="display:flex; justify-content:space-between; background:var(--brun); color:white; padding:20px; border-radius:var(--radius-md); margin-bottom:28px; text-align:center; box-shadow: var(--shadow-md);">
-          <div style="flex: 1;"><strong id="hist-stat-count" style="font-size:22px; color:var(--creme); font-family: 'Poppins';">0</strong><br><span style="font-size: 12px; opacity: 0.8;">Commandes</span></div>
-          <div style="border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); padding: 0 16px; flex: 1;"><strong id="hist-stat-spent" style="font-size:22px; color:var(--creme); font-family: 'Poppins';">0 F</strong><br><span style="font-size: 12px; opacity: 0.8;">Dépensé</span></div>
-          <div style="flex: 1;"><strong style="font-size:18px; color:var(--creme); display:block; margin-top:4px;">Campus</strong><span style="font-size: 12px; opacity: 0.8;">Relais</span></div>
-        </div>
-        <div class="section-title">Mes Commandes Passées</div>
-        <div id="history-list"></div>
+    <div class="overlay" id="payment-overlay" onclick="closePaymentSheet()"></div>
+    <div class="bottom-sheet" id="payment-sheet">
+      <h3 style="margin-bottom:14px; color: var(--brun);">💳 Finalisation de la commande</h3>
+      <div style="background:var(--off-white); border:1px solid var(--gris-clair); padding:14px; border-radius:12px; margin-bottom:18px; font-size:14px;">
+        <p style="margin-bottom: 6px;">☀️ Déjeuner : <span id="summary-dej" style="font-weight:600;">Aucun</span></p>
+        <p style="margin-bottom: 6px;">🌙 Dîner : <span id="summary-din" style="font-weight:600;">Aucun</span></p>
+        <h4 style="margin-top:10px; font-size:16px; color:var(--orange);">Net à transférer : <span id="summary-total">0</span> FCFA</h4>
       </div>
-
-      <div id="tab-profil" class="app-section">
-        <div style="text-align:center; margin-bottom:32px;">
-          <div style="width:90px; height:90px; background:var(--creme); border-radius:50%; margin:0 auto 16px auto; display:flex; align-items:center; justify-content:center; font-size:42px; box-shadow: var(--shadow-sm);">🎓</div>
-          <h2 id="profile-display-name" style="color:var(--brun); font-weight: 700;">Chargement...</h2>
-          <p id="profile-display-email" style="font-size:14px; color:var(--brun-clair); margin-top:4px;">...</p>
-        </div>
-        <div style="background:white; border:1px solid rgba(90, 58, 34, 0.08); padding:24px; border-radius:var(--radius-lg); box-shadow: var(--shadow-sm);">
-          <div class="form-group">
-            <label>Mon numéro Mobile Money</label>
-            <input type="text" id="profile-momo" placeholder="Ex: +229 61XX">
-          </div>
-          <button class="btn btn-orange" onclick="updateMomoNumber()" style="margin-bottom:14px;">💾 Mettre à jour mon profil</button>
-          <button class="btn" onclick="handleLogout()" style="background:var(--rouge);">Déconnexion</button>
-        </div>
+      <div class="form-group">
+        <label>1. Choisissez votre opérateur</label>
+        <select id="pay-operator" onchange="updateMomoInstructions()">
+          <option value="MTN">MTN Mobile Money</option>
+          <option value="Moov">Moov Money</option>
+        </select>
       </div>
-
-      <div class="nav-bar">
-        <div class="nav-item active" id="nav-accueil" onclick="switchTab('accueil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Accueil</div>
-        <div class="nav-item" id="nav-commander" onclick="switchTab('commander')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.46 3.89 3.42 4.31V22h2v-8.69c1.96-.42 3.42-2.19 3.42-4.31V2zm6-6v8h1.91v11h2V3c-2.11 0-3.91 1.63-3.91 3z"/></svg>Commander</div>
-        <div class="nav-item" id="nav-formules" onclick="switchTab('formules')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>Abonnement</div>
-        <div class="nav-item" id="nav-historique" onclick="switchTab('historique')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Historique</div>
-        <div class="nav-item" id="nav-profil" onclick="switchTab('profil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Profil</div>
+      <div style="background:#FFFBEB; border:1px dashed var(--orange); padding:14px; border-radius:12px; margin-bottom:18px; font-size:13px;">
+        ℹ️ <strong>Instructions :</strong> Envoyez le montant exact sur le numéro officiel MIDOUNOU : 
+        <strong style="font-size:15px; color:var(--brun); display:block; margin-top:6px;" id="momo-target-number">Chargement...</strong>
       </div>
-
-      <div class="overlay" id="payment-overlay" onclick="closePaymentSheet()"></div>
-      <div class="bottom-sheet" id="payment-sheet">
-        <h3 style="margin-bottom:16px; font-weight: 700;">💳 Finalisation de la commande</h3>
-        <div style="background:var(--off-white); border:1px solid rgba(90, 58, 34, 0.08); padding:18px; border-radius:var(--radius-md); margin-bottom:22px; font-size:14px; box-shadow: var(--shadow-sm);">
-          <p style="margin-bottom: 8px; color: var(--noir);">☀️ <strong style="color: var(--brun);">Déjeuner :</strong> <span id="summary-dej" style="font-weight:600; color: var(--brun-clair);">Aucun</span></p>
-          <p style="margin-bottom: 12px; color: var(--noir);">🌙 <strong style="color: var(--brun);">Dîner :</strong> <span id="summary-din" style="font-weight:600; color: var(--brun-clair);">Aucun</span></p>
-          <div style="height: 1px; background: var(--gris-clair); margin: 12px 0;"></div>
-          <h4 style="font-size:18px; color:var(--orange); font-weight: 700; font-family: 'Poppins';">Net à transférer : <span id="summary-total">0</span> FCFA</h4>
-        </div>
-        <div class="form-group">
-          <label>1. Choisissez votre opérateur</label>
-          <select id="pay-operator" onchange="updateMomoInstructions()">
-            <option value="MTN">MTN Mobile Money</option>
-            <option value="Moov">Moov Money</option>
-          </select>
-        </div>
-        <div style="background:var(--orange-light); border:1px dashed var(--orange); padding:16px; border-radius:var(--radius-md); margin-bottom:22px; font-size:14px; line-height: 1.5; color: var(--brun);">
-          ℹ️ <strong>Instructions :</strong> Envoyez le montant exact sur le numéro officiel MIDOUNOU : 
-          <strong style="font-size:18px; color:var(--brun); display:block; margin-top:6px; font-family: 'Poppins';" id="momo-target-number">Chargement...</strong>
-        </div>
-        <div class="form-group">
-          <label>2. Saisissez la Référence de transaction SMS</label>
-          <input type="text" id="pay-reference" placeholder="Ex: TXN8493029202">
-        </div>
-        <button class="btn btn-orange" onclick="submitOrderToSupabase()">✅ Valider ma commande</button>
-        <button class="btn" onclick="closePaymentSheet()" style="background:transparent; color:var(--brun-clair); margin-top:10px; box-shadow: none;">Annuler</button>
+      <div class="form-group">
+        <label>2. Saisissez la Référence de transaction SMS</label>
+        <input type="text" id="pay-reference" placeholder="Ex: TXN8493029202">
       </div>
+      <button class="btn btn-orange" onclick="submitOrderToSupabase()">✅ Valider ma commande</button>
+      <button class="btn" onclick="closePaymentSheet()" style="background:transparent; color:var(--brun-clair); margin-top:8px;">Annuler</button>
     </div>
   </div>
 
@@ -722,11 +334,13 @@
     function renderGlobalConfigUI() {
       if(!globalConfig) return;
       
+      // Mise à jour des points de livraison
       const sites = globalConfig.delivery_sites ? globalConfig.delivery_sites.split(',') : [];
       const siteSelect = document.getElementById('order-site-select');
       siteSelect.innerHTML = '';
       sites.forEach(s => siteSelect.innerHTML += `<option value="${s}">${s}</option>`);
 
+      // Mise à jour des formules dans l'interface
       if(globalConfig.formulas_data) {
         const fData = JSON.parse(globalConfig.formulas_data);
         const formulaSelect = document.getElementById('order-formula-select');
@@ -744,13 +358,13 @@
           
           const cardHtml = `
             <div class="formula-card" onclick="switchTab('commander')">
-              <strong style="color:var(--brun); font-size:16px; display:block; margin-bottom:4px;">${name}</strong>
-              <div style="color:var(--orange); font-weight:800; font-size:20px; margin:6px 0; font-family:'Poppins';">${f.price} F</div>
-              <small style="color:var(--brun-clair); font-size:12px; line-height:1.4; display:block;">${f.desc}</small>
+              <strong style="color:var(--brun);">${name}</strong>
+              <div style="color:var(--orange); font-weight:800; margin:6px 0;">${f.price} F</div>
+              <small style="color:var(--brun-clair); font-size:12px;">${f.desc}</small>
             </div>
           `;
           containerHome.innerHTML += cardHtml;
-          containerFull.innerHTML += `<div style="margin-bottom:16px;">${cardHtml}</div>`;
+          containerFull.innerHTML += `<div style="background:white; border:1px solid var(--gris-clair); padding:20px; border-radius:16px; margin-bottom:16px;">${cardHtml}</div>`;
         });
       }
     }
@@ -794,10 +408,10 @@
           <div class="meal-card ${isOrderingClosed ? 'disabled' : ''}" id="meal-card-${meal.id}" onclick="selectMeal(${meal.id}, '${meal.type}')">
             <div class="meal-img-wrapper" style="${meal.image_url ? `background-image:url('${meal.image_url}')` : ''}">${!meal.image_url ? meal.emoji : ''}</div>
             <div class="meal-details-box">
-              <strong style="display:block; font-size:15px; color:var(--brun); font-weight:600; margin-bottom:4px;">${meal.name}</strong>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                <small style="color:var(--brun-clair); font-size:12px; font-weight:500;">✨ ${meal.calories || 0} Cal</small>
-                <div style="color:var(--orange); font-weight:700; font-size:15px; font-family:'Poppins';">${meal.price} F</div>
+              <strong style="display:block; font-size:14px; color:var(--brun);">${meal.name}</strong>
+              <div style="display:flex; justify-content:space-between; margin-top:6px;">
+                <small style="color:var(--brun-clair); font-size:11px;">${meal.calories || 0} Cal</small>
+                <div style="color:var(--orange); font-weight:700; font-size:13px;">${meal.price} F</div>
               </div>
             </div>
           </div>
@@ -860,7 +474,7 @@
       };
       const { error } = await _supabase.from('midounou_orders').insert([newOrder]);
       if (error) alert("Erreur : " + error.message); 
-      else { alert("Commande soumise avec succès !"); closePaymentSheet(); switchTab('historique'); loadStudentHistory(); }
+      else { alert("Commande soumise !"); closePaymentSheet(); switchTab('historique'); loadStudentHistory(); }
     }
 
     async function loadStudentHistory() {
@@ -869,27 +483,16 @@
       const histList = document.getElementById('history-list');
       histList.innerHTML = '';
       document.getElementById('hist-stat-count').innerText = orders?.length || 0;
-      
-      let totalSpent = 0;
       orders?.forEach(o => {
-        totalSpent += o.total_amount || 0;
         histList.innerHTML += `
           <div class="order-item">
             <span class="status-pill status-attente">${o.status}</span>
-            <strong style="color:var(--brun); font-family: 'Poppins';">ID: #${o.id.toString().slice(0,8)}</strong>
-            <div style="font-size:14px; margin:10px 0; color: var(--noir); line-height:1.5;">
-              ${o.repas_dejeuner ? `☀️ <span style="font-weight:500;">${o.repas_dejeuner}</span>` : ''} 
-              ${o.repas_diner ? `<br>🌙 <span style="font-weight:500;">${o.repas_diner}</span>` : ''}
-            </div>
-            <div style="height: 1px; background: var(--gris-fond); margin: 10px 0;"></div>
-            <small style="color: var(--brun-clair); font-weight: 500; display: flex; justify-content: space-between;">
-              <span>📍 ${o.delivery_site}</span>
-              <span style="color: var(--orange); font-weight: 700;">${o.total_amount} FCFA</span>
-            </small>
+            <strong style="color:var(--brun);">${o.id}</strong>
+            <div style="font-size:13px; margin:6px 0;">${o.repas_dejeuner ? `☀️ ${o.repas_dejeuner}` : ''} ${o.repas_diner ? `<br>🌙 ${o.repas_diner}` : ''}</div>
+            <small>📍 ${o.delivery_site} • ${o.total_amount} F</small>
           </div>
         `;
       });
-      document.getElementById('hist-stat-spent').innerText = `${totalSpent} F`;
     }
 
     function switchTab(tabId) {
@@ -897,7 +500,6 @@
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById(`tab-${tabId}`).classList.add('active');
       document.getElementById(`nav-${tabId}`).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
