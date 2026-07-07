@@ -4,81 +4,437 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MIDOUNOU — Application Étudiant 📱</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ibkZAVn-s6ZPc66xRbjuhAWQwPjpB66L3q80Q-qHzfwQE56BQb8SlE3p1ETnQcd0l0qdCr8IqWqgw1i4jdb3NMeAMtEGFTLecr6g6Bv-BAqPrfynPBH1NlffkkJ-N4vjN0iY8umy6PQYnZvtPJx0_Z8NAMtEZ3BZsRDQUA9AyZVvD8M9QQ_reE_2786NgqjScp1pI_MuLC8mGuT4pL3j4Q0BnOnpWrZ457p74A2T--4YWgj15dZLHbbkTE7LRarbsCVTBf2Mv9-lu-mZR-Idbu2x0XzsLFKPj5YBzQrr4BLVGvCFCZB7s3ROItURRUaQ" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
-      --brun: #5A3A22; --creme: #F5EBD0; --orange: #D97706; --vert: #6B8E5A;
-      --noir: #202D2D; --brun-clair: #8a6444; --off-white: #FBF7EE;
-      --gris-clair: #ECE2CA; --rouge: #C0392B;
+      --brun: #5A3A22; 
+      --creme: #F5EBD0; 
+      --orange: #D97706; 
+      --orange-light: rgba(217, 119, 6, 0.08);
+      --vert: #6B8E5A;
+      --noir: #1E2525; 
+      --brun-clair: #8a6444; 
+      --off-white: #FDFBF7;
+      --gris-cliquable: #F5EFE2;
+      --gris-clair: #ECE2CA; 
+      --rouge: #DC2626;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --shadow-sm: 0 2px 8px rgba(90, 58, 34, 0.04);
+      --shadow-md: 0 8px 24px rgba(90, 58, 34, 0.06);
+      --shadow-lg: 0 16px 36px rgba(90, 58, 34, 0.1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--off-white); color: var(--noir); padding-bottom: 90px; }
-    h1, h2, h3, h4, .poppins { font-family: 'Poppins', sans-serif; }
+    
+    html {
+      background-color: #F1E7D5;
+      scroll-behavior: smooth;
+      height: 100%;
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* Auth & Formulaires */
-    .auth-container { max-width: 420px; margin: 40px auto; padding: 32px 24px; background: white; border-radius: 20px; border: 1px solid var(--gris-clair); }
-    .auth-logo { text-align: center; font-size: 36px; font-weight: 800; color: var(--brun); margin-bottom: 24px; }
+    body { 
+      background-color: var(--off-white); 
+      color: var(--noir); 
+      padding-bottom: 90px; 
+      max-width: 480px; 
+      margin: 0 auto; 
+      min-height: 100vh;
+      box-shadow: 0 0 60px rgba(90, 58, 34, 0.15);
+      position: relative;
+    }
+
+    h1, h2, h3, h4, .poppins { 
+      font-family: 'Poppins', sans-serif; 
+      letter-spacing: -0.5px;
+    }
+
+    /* Loader de démarrage rapide */
+    #app-loader {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--off-white);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--gris-clair);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gris-clair); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--brun-clair); }
+
+    a, button, .meal-card, .formula-card, .nav-item, input, select {
+      transition: var(--transition);
+    }
+
+    /* Écrans d'Authentification */
+    #auth-screen {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #FFFDF9 0%, var(--off-white) 100%);
+    }
+    .auth-container { 
+      width: 100%;
+      padding: 36px 28px; 
+      background: white; 
+      border-radius: var(--radius-lg); 
+      border: 1px solid rgba(236, 226, 202, 0.4); 
+      box-shadow: var(--shadow-lg);
+    }
+    .auth-logo { 
+      text-align: center; 
+      font-size: 36px; 
+      font-weight: 800; 
+      color: var(--brun); 
+      margin-bottom: 8px; 
+      letter-spacing: -1.5px;
+    }
+    
+    /* Formulaires Épurés */
     .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--brun); }
-    .form-group input, .form-group select { width: 100%; padding: 14px; border: 1px solid var(--gris-clair); border-radius: 12px; font-size: 15px; background: var(--off-white); }
+    .form-group label { 
+      display: block; 
+      font-weight: 700; 
+      font-size: 12px; 
+      margin-bottom: 8px; 
+      color: var(--brun-clair); 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group select { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border: 1.5px solid var(--gris-clair); 
+      border-radius: var(--radius-sm); 
+      font-size: 15px; 
+      background: #FAFAFA; 
+      color: var(--noir);
+      font-weight: 500;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--orange);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.15);
+    }
     
-    /* Boutons */
-    .btn { display: block; width: 100%; padding: 16px; background: var(--brun); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; }
-    .btn-orange { background: var(--orange); }
-
-    /* Layout et sections */
-    .header-bar { background: var(--brun); color: white; padding: 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-    .app-section { display: none; padding: 20px 16px; max-width: 600px; margin: 0 auto; }
-    .app-section.active { display: block; }
-
-    /* Cartes */
-    .banner-sub { background: linear-gradient(135deg, var(--brun) 0%, var(--brun-clair) 100%); color: var(--creme); padding: 24px; border-radius: 18px; margin-bottom: 20px; }
-    .countdown-box { background: white; border: 1px solid var(--gris-clair); border-left: 5px solid var(--orange); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 24px; font-weight: 600; }
-    .countdown-box span { color: var(--orange); font-weight: 800; font-size: 17px; }
-    .section-title { font-size: 18px; font-weight: 700; margin: 24px 0 14px 0; color: var(--brun); }
+    /* Boutons Modernes */
+    .btn { 
+      display: flex; 
+      align-items: center;
+      justify-content: center;
+      width: 100%; 
+      padding: 15px; 
+      background: var(--brun); 
+      color: white; 
+      border: none; 
+      border-radius: var(--radius-sm); 
+      font-size: 15px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      box-shadow: 0 4px 12px rgba(90, 58, 34, 0.15);
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--brun-clair);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(90, 58, 34, 0.22);
+    }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
     
-    /* Scroll horizontal pour formules */
-    .scroll-x { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; }
-    .formula-card { min-width: 220px; background: white; border: 1px solid var(--gris-clair); border-radius: 16px; padding: 18px; cursor: pointer; }
+    .btn-orange { 
+      background: var(--orange); 
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+    }
+    .btn-orange:hover:not(:disabled) {
+      background: #C26705;
+      box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
 
-    /* Grid Repas */
-    .meals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    .meal-card { background: white; border: 1px solid var(--gris-clair); border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; }
-    .meal-card.selected { border: 2px solid var(--orange); background: #FFFBEB; }
-    .meal-card.disabled { opacity: 0.6; cursor: not-allowed; }
-    .meal-img-wrapper { height: 110px; background: #F3F4F6; display: flex; align-items: center; justify-content: center; font-size: 36px; background-size: cover; background-position: center; }
+    /* En-tête de l'application */
+    .header-bar { 
+      background: rgba(90, 58, 34, 0.96); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: white; 
+      padding: 18px 20px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      box-shadow: 0 4px 20px rgba(90, 58, 34, 0.08);
+    }
+    .user-badge {
+      background: linear-gradient(135deg, var(--orange) 0%, #B45309 100%);
+      padding: 6px 14px; 
+      border-radius: 99px; 
+      font-size: 11px; 
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+    }
+    
+    .app-section { 
+      display: none; 
+      padding: 20px; 
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .app-section.active { 
+      display: block; 
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Bannières informatives */
+    .banner-sub { 
+      background: linear-gradient(135deg, var(--brun) 0%, #422814 100%); 
+      color: white; 
+      padding: 24px; 
+      border-radius: var(--radius-md); 
+      margin-bottom: 18px; 
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .banner-sub::after {
+      content: '';
+      position: absolute;
+      width: 150px; height: 150px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 50%;
+      top: -30px; right: -30px;
+    }
+    .countdown-box { 
+      background: white; 
+      border: 1px solid rgba(217, 119, 6, 0.15); 
+      border-left: 4px solid var(--orange); 
+      padding: 14px; 
+      border-radius: var(--radius-sm); 
+      text-align: center; 
+      margin-bottom: 20px; 
+      font-weight: 600; 
+      color: var(--brun);
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .countdown-box span { 
+      color: var(--orange); 
+      font-weight: 700; 
+    }
+    .section-title { 
+      font-size: 16px; 
+      font-weight: 700; 
+      margin: 24px 0 12px 0; 
+      color: var(--brun); 
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    /* Containers Re-stylisés */
+    .app-section > div[style*="background:white"], 
+    .app-section > div[style*="background: white"] {
+      background: white !important;
+      border: 1px solid rgba(236, 226, 202, 0.5) !important;
+      border-radius: var(--radius-md) !important;
+      padding: 18px !important;
+      box-shadow: var(--shadow-sm) !important;
+    }
+
+    /* Carrousel des abonnements */
+    .scroll-x { 
+      display: flex; 
+      gap: 12px; 
+      overflow-x: auto; 
+      padding-bottom: 8px; 
+      scrollbar-width: none;
+    }
+    .scroll-x::-webkit-scrollbar { display: none; }
+    .formula-card { 
+      min-width: 210px; 
+      background: white; 
+      border: 1px solid rgba(236, 226, 202, 0.6); 
+      border-radius: var(--radius-md); 
+      padding: 18px; 
+      cursor: pointer; 
+      box-shadow: var(--shadow-sm);
+    }
+    .formula-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--orange);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Grille de Repas Native */
+    .meals-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 14px; 
+      margin-bottom: 20px; 
+    }
+    .meal-card { 
+      background: white; 
+      border: 1px solid rgba(236, 226, 202, 0.5); 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      cursor: pointer; 
+      position: relative; 
+      box-shadow: var(--shadow-sm);
+    }
+    .meal-card:hover:not(.disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .meal-card.selected { 
+      border: 2px solid var(--orange); 
+      background: #FFFDF9; 
+    }
+    .meal-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 10px; right: 10px;
+      background: var(--orange);
+      color: white;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: bold; z-index: 5;
+    }
+    .meal-card.disabled { opacity: 0.4; cursor: not-allowed; }
+    .meal-img-wrapper { 
+      height: 115px; 
+      background: #FAF7F0; 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 36px; 
+      background-size: cover; background-position: center; 
+    }
     .meal-details-box { padding: 12px; }
 
-    /* Footer Nav */
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: white; border-top: 1px solid var(--gris-clair); display: flex; justify-content: space-around; align-items: center; z-index: 200; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--brun-clair); font-size: 11px; font-weight: 600; cursor: pointer; opacity: 0.7; }
-    .nav-item.active { color: var(--orange); opacity: 1; }
-    .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
+    /* Barre de navigation basse moderne */
+    .nav-bar { 
+      position: fixed; 
+      bottom: 0; left: 50%; 
+      transform: translateX(-50%); 
+      width: 100%; max-width: 480px; 
+      height: 76px; 
+      background: rgba(255, 255, 255, 0.96); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(236, 226, 202, 0.4); 
+      display: flex; justify-content: space-around; align-items: center; 
+      z-index: 200; 
+      box-shadow: 0 -4px 20px rgba(90, 58, 34, 0.05);
+      padding: 0 6px;
+    }
+    .nav-item { 
+      display: flex; flex-direction: column; align-items: center; 
+      color: var(--brun-clair); 
+      font-size: 10px; font-weight: 600; 
+      cursor: pointer; opacity: 0.6; 
+      padding: 8px 12px; border-radius: 12px;
+    }
+    .nav-item:hover { opacity: 1; color: var(--brun); }
+    .nav-item.active { 
+      color: var(--orange); opacity: 1; 
+      background: var(--orange-light);
+    }
+    .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; }
 
-    /* Bottom Sheet */
-    .bottom-sheet { position: fixed; bottom: -100%; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 300; padding: 28px 24px; max-height: 85%; overflow-y: auto; transition: bottom 0.3s; }
+    /* Fenêtres contextuelles (Bottom Sheet) */
+    .bottom-sheet { 
+      position: fixed; 
+      bottom: -100%; left: 50%; 
+      transform: translateX(-50%); 
+      width: 100%; max-width: 480px; 
+      background: white; 
+      border-top-left-radius: var(--radius-lg); 
+      border-top-right-radius: var(--radius-lg); 
+      z-index: 300; 
+      padding: 30px 24px 24px 24px; 
+      max-height: 80%; overflow-y: auto; 
+      transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
+    }
+    .bottom-sheet::before {
+      content: ''; position: absolute;
+      top: 12px; left: 50%; transform: translateX(-50%);
+      width: 36px; height: 4px;
+      background: var(--gris-clair); border-radius: 99px;
+    }
     .bottom-sheet.open { bottom: 0; }
-    .overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 250; display: none; }
+    .overlay { 
+      position: fixed; 
+      top: 0; left: 0; right: 0; bottom: 0; 
+      background: rgba(30, 37, 37, 0.4); 
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 250; display: none; 
+    }
     .overlay.open { display: block; }
     
     /* Historique */
-    .order-item { background: white; border: 1px solid var(--gris-clair); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
-    .status-pill { float: right; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .status-attente { background: #FEF3C7; color: #D97706; }
-    .status-confirme { background: #D1FAE5; color: #059669; }
-    .status-livre { background: #DBEAFE; color: #2563EB; }
-    .status-annule { background: #FEE2E2; color: #DC2626; }
+    .order-item { 
+      background: white; 
+      border: 1px solid rgba(236, 226, 202, 0.5); 
+      border-radius: var(--radius-md); 
+      padding: 16px; margin-bottom: 12px; 
+      box-shadow: var(--shadow-sm);
+    }
+    .status-pill { 
+      float: right; padding: 4px 10px; 
+      border-radius: 99px; font-size: 10px; font-weight: 700; 
+    }
+    .status-attente { background: #FFF7ED; color: #C2410C; border: 1px solid #FFEDD5; }
+    .status-confirme { background: #F0FDF4; color: #15803D; border: 1px solid #DCFCE7; }
+    .status-livre { background: #EFF6FF; color: #1D4ED8; border: 1px solid #DBEAFE; }
+    .status-annule { background: #FEF2F2; color: #B91C1C; border: 1px solid #FEE2E2; }
   </style>
 </head>
 <body>
 
-  <!-- Écrans d'authentification -->
+  <div id="app-loader">
+    <div class="spinner"></div>
+    <p style="font-family:'Poppins'; font-weight:600; color:var(--brun); font-size:15px;">Chargement de Midounou...</p>
+  </div>
+
   <div id="auth-screen">
     <div class="auth-container" id="login-box">
       <div class="auth-logo">MIDOUNOU</div>
-      <h3 style="margin-bottom:18px; text-align:center; color: var(--brun);">Connexion Étudiant</h3>
+      <h3 style="margin-bottom:24px; text-align:center; color: var(--brun);">Connexion Étudiant</h3>
       <div class="form-group">
         <label>Adresse Email</label>
         <input type="email" id="login-email" placeholder="etudiant@uac.bj">
@@ -87,13 +443,13 @@
         <label>Mot de passe</label>
         <input type="password" id="login-pass" placeholder="••••••••">
       </div>
-      <button class="btn btn-orange" onclick="handleLogin()" style="margin-bottom:16px;">Se connecter</button>
-      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Nouveau ? <a href="#" onclick="toggleAuthBoxes(false)" style="color:var(--orange); font-weight:600; text-decoration: none;">Créer un compte</a></p>
+      <button class="btn btn-orange" onclick="handleLogin()" style="margin-bottom:20px;">Se connecter</button>
+      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Nouveau ? <a href="#" onclick="toggleAuthBoxes(false)" style="color:var(--orange); font-weight:700; text-decoration: none;">Créer un compte</a></p>
     </div>
 
     <div class="auth-container" id="register-box" style="display: none;">
       <div class="auth-logo">MIDOUNOU</div>
-      <h3 style="margin-bottom:18px; text-align:center; color: var(--brun);">Inscription</h3>
+      <h3 style="margin-bottom:24px; text-align:center; color: var(--brun);">Inscription</h3>
       <div class="form-group">
         <label>Nom complet</label>
         <input type="text" id="reg-name" placeholder="Ex: Jean Houndegla">
@@ -110,23 +466,21 @@
         <label>Mot de passe</label>
         <input type="password" id="reg-pass" placeholder="Minimum 6 caractères">
       </div>
-      <button class="btn" onclick="handleRegister()" style="margin-bottom:16px;">S'inscrire</button>
-      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Déjà inscrit ? <a href="#" onclick="toggleAuthBoxes(true)" style="color:var(--brun); font-weight:600; text-decoration: none;">Se connecter</a></p>
+      <button class="btn" onclick="handleRegister()" style="margin-bottom:20px;">S'inscrire</button>
+      <p style="text-align:center; font-size:14px; color: var(--brun-clair);">Déjà inscrit ? <a href="#" onclick="toggleAuthBoxes(true)" style="color:var(--brun); font-weight:700; text-decoration: none;">Se connecter</a></p>
     </div>
   </div>
 
-  <!-- Interface principale de l'application -->
   <div id="app-screen" style="display: none;">
     <div class="header-bar">
-      <div class="logo" style="font-weight: 800; font-size: 22px;">MIDOUNOU</div>
-      <div class="user-badge" id="header-user-plan" style="background: var(--orange); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;">Formule : Aucun</div>
+      <div class="logo" style="font-weight: 800; font-size: 22px; font-family:'Poppins';">MIDOUNOU</div>
+      <div class="user-badge" id="header-user-plan">Formule : Aucun</div>
     </div>
 
-    <!-- Tab Accueil -->
     <div id="tab-accueil" class="app-section active">
       <div class="banner-sub">
         <h3 id="welcome-name">Salut l'Étudiant 👋</h3>
-        <p style="font-size: 14px; margin-top:4px; opacity: 0.9;" id="welcome-plan-desc">Abonnement actif : Aucun. Choisis une formule pour économiser !</p>
+        <p style="font-size: 13px; margin-top:6px; opacity: 0.85;" id="welcome-plan-desc">Abonnement actif : Aucun. Choisis une formule pour économiser !</p>
       </div>
 
       <div class="countdown-box" id="global-timer-banner">
@@ -135,19 +489,16 @@
 
       <div class="section-title">☀️ Aperçu du Menu du Jour</div>
       <div style="background:white; border:1px solid var(--gris-clair); padding:16px; border-radius:16px;">
-        <p>🍽️ <strong>Déjeuner :</strong> <span id="preview-dejeuner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
-        <p style="margin-top:10px;">🍽️ <strong>Dîner :</strong> <span id="preview-diner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
+        <p style="font-size:14px;">🍽️ <strong>Déjeuner :</strong> <span id="preview-dejeuner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
+        <p style="margin-top:10px; font-size:14px;">🍽️ <strong>Dîner :</strong> <span id="preview-diner" style="color: var(--brun-clair);">Aucun plat configuré</span></p>
       </div>
 
       <div class="section-title">💼 Nos Formules Campus Officielles</div>
-      <div class="scroll-x" id="formulas-container-home">
-        <!-- Généré dynamiquement depuis la config admin -->
-      </div>
+      <div class="scroll-x" id="formulas-container-home"></div>
     </div>
 
-    <!-- Tab Commander -->
     <div id="tab-commander" class="app-section">
-      <div id="closed-order-alert" style="display:none; background:#FEE2E2; border:1px solid var(--rouge); color:var(--rouge); padding:14px; border-radius:12px; margin-bottom:16px; font-weight:600; text-align:center;">
+      <div id="closed-order-alert" style="display:none; background:#FEF2F2; border:1px solid var(--rouge); color:var(--rouge); padding:14px; border-radius:12px; margin-bottom:16px; font-weight:600; text-align:center; font-size:13px;">
         🛑 Les commandes sont actuellement clôturées. Revenez pendant la fenêtre autorisée.
       </div>
 
@@ -160,9 +511,7 @@
 
       <div class="form-group">
         <label>Lieu de livraison</label>
-        <select id="order-site-select">
-          <!-- Peuplté dynamiquement -->
-        </select>
+        <select id="order-site-select"></select>
       </div>
 
       <div class="section-title">☀️ Choisissez votre Déjeuner</div>
@@ -171,37 +520,33 @@
       <div class="section-title">🌙 Choisissez votre Dîner</div>
       <div class="meals-grid" id="grid-diner"></div>
 
-      <div style="background:white; padding:20px; border:1px solid var(--gris-clair); border-radius:16px; margin-top:24px; text-align:center;">
-        <div style="font-size:18px; font-weight:700; margin-bottom:14px;">Total à payer : <span id="order-total-display" style="color:var(--orange); font-size:24px;">0</span> FCFA</div>
-        <button class="btn btn-orange" id="btn-trigger-payment" onclick="openPaymentSheet()">🛒 Procéder au paiement Mobile Money</button>
+      <div style="background:white; padding:20px; border-radius:16px; margin-top:24px; text-align:center; box-shadow: var(--shadow-sm);">
+        <div style="font-size:16px; font-weight:600; margin-bottom:6px; color:var(--brun-clair);">Total à payer</div>
+        <div style="font-size:28px; font-weight:800; margin-bottom:16px; color:var(--orange); font-family:'Poppins';"><span id="order-total-display">0</span> <span style="font-size:16px; font-weight:600;">FCFA</span></div>
+        <button class="btn btn-orange" id="btn-trigger-payment" onclick="openPaymentSheet()">🛒 Passer au paiement mobile</button>
       </div>
     </div>
 
-    <!-- Tab Formules -->
     <div id="tab-formules" class="app-section">
       <div class="section-title">Souscription aux Formules d'Abonnements</div>
-      <div id="formulas-container-full">
-        <!-- Généré dynamiquement -->
-      </div>
+      <div id="formulas-container-full"></div>
     </div>
 
-    <!-- Tab Historique -->
     <div id="tab-historique" class="app-section">
-      <div style="display:flex; justify-content:space-between; background:var(--brun); color:white; padding:16px; border-radius:14px; margin-bottom:20px; text-align:center; font-size:13px;">
-        <div><strong id="hist-stat-count" style="font-size:18px; color:var(--creme);">0</strong><br>Commandes</div>
-        <div style="border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); padding: 0 16px;"><strong id="hist-stat-spent" style="font-size:18px; color:var(--creme);">0 F</strong><br>Dépensé</div>
-        <div><strong>Campus</strong><br>Relais</div>
+      <div style="display:flex; justify-content:space-between; background:linear-gradient(135deg, var(--brun) 0%, var(--brun-clair) 100%); color:white; padding:18px; border-radius:16px; margin-bottom:24px; text-align:center; font-size:12px; box-shadow: var(--shadow-md);">
+        <div style="flex:1;"><strong id="hist-stat-count" style="font-size:20px; color:var(--creme); font-family:'Poppins';">0</strong><br><span style="opacity:0.8;">Commandes</span></div>
+        <div style="flex:1; border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2);"><strong id="hist-stat-spent" style="font-size:20px; color:var(--creme); font-family:'Poppins';">0 F</strong><br><span style="opacity:0.8;">Dépensé</span></div>
+        <div style="flex:1;"><strong style="font-size:16px; display:block; margin-top:2px;">📍 Campus</strong><span style="opacity:0.8;">Relais</span></div>
       </div>
       <div class="section-title">Mes Commandes Passées</div>
       <div id="history-list"></div>
     </div>
 
-    <!-- Tab Profil -->
     <div id="tab-profil" class="app-section">
       <div style="text-align:center; margin-bottom:24px;">
-        <div style="width:80px; height:80px; background:var(--creme); border-radius:50%; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; font-size:36px;">🎓</div>
-        <h2 id="profile-display-name" style="color:var(--brun);">Chargement...</h2>
-        <p id="profile-display-email" style="font-size:14px; color:var(--brun-clair); margin-top:2px;">...</p>
+        <div style="width:72px; height:72px; background:var(--gris-cliquable); border-radius:50%; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow: var(--shadow-sm);">🎓</div>
+        <h2 id="profile-display-name" style="color:var(--brun); font-size:20px;">Chargement...</h2>
+        <p id="profile-display-email" style="font-size:13px; color:var(--brun-clair); margin-top:2px;">...</p>
       </div>
       <div style="background:white; border:1px solid var(--gris-clair); padding:20px; border-radius:16px;">
         <div class="form-group">
@@ -209,26 +554,25 @@
           <input type="text" id="profile-momo" placeholder="Ex: +229 61XX">
         </div>
         <button class="btn btn-orange" onclick="updateMomoNumber()" style="margin-bottom:12px;">💾 Mettre à jour mon profil</button>
-        <button class="btn" onclick="handleLogout()" style="background:#EF4444;">Déconnexion</button>
+        <button class="btn" onclick="handleLogout()" style="background:#EF4444; box-shadow:none;">Déconnexion</button>
       </div>
     </div>
 
-    <!-- Navigation -->
     <div class="nav-bar">
       <div class="nav-item active" id="nav-accueil" onclick="switchTab('accueil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Accueil</div>
       <div class="nav-item" id="nav-commander" onclick="switchTab('commander')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.46 3.89 3.42 4.31V22h2v-8.69c1.96-.42 3.42-2.19 3.42-4.31V2zm6-6v8h1.91v11h2V3c-2.11 0-3.91 1.63-3.91 3z"/></svg>Commander</div>
       <div class="nav-item" id="nav-formules" onclick="switchTab('formules')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>Abonnement</div>
       <div class="nav-item" id="nav-historique" onclick="switchTab('historique')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Historique</div>
-      <div class="nav-item" id="nav-profil" onclick="switchTab('profil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Mon Profil</div>
+      <div class="nav-item" id="nav-profil" onclick="switchTab('profil')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>Profil</div>
     </div>
 
     <div class="overlay" id="payment-overlay" onclick="closePaymentSheet()"></div>
     <div class="bottom-sheet" id="payment-sheet">
-      <h3 style="margin-bottom:14px; color: var(--brun);">💳 Finalisation de la commande</h3>
-      <div style="background:var(--off-white); border:1px solid var(--gris-clair); padding:14px; border-radius:12px; margin-bottom:18px; font-size:14px;">
-        <p style="margin-bottom: 6px;">☀️ Déjeuner : <span id="summary-dej" style="font-weight:600;">Aucun</span></p>
-        <p style="margin-bottom: 6px;">🌙 Dîner : <span id="summary-din" style="font-weight:600;">Aucun</span></p>
-        <h4 style="margin-top:10px; font-size:16px; color:var(--orange);">Net à transférer : <span id="summary-total">0</span> FCFA</h4>
+      <h3 style="margin-bottom:16px; color: var(--brun); font-family:'Poppins';">💳 Finalisation de la commande</h3>
+      <div style="background:var(--off-white); border:1px solid var(--gris-clair); padding:16px; border-radius:14px; margin-bottom:20px; font-size:14px; box-shadow: var(--shadow-sm);">
+        <p style="margin-bottom: 8px;">☀️ Déjeuner : <span id="summary-dej" style="font-weight:600; color:var(--brun);">Aucun</span></p>
+        <p style="margin-bottom: 12px;">🌙 Dîner : <span id="summary-din" style="font-weight:600; color:var(--brun);">Aucun</span></p>
+        <h4 style="margin-top:12px; font-size:15px; color:var(--orange); border-top:1px dashed var(--gris-clair); padding-top:12px;">Net à transférer : <span id="summary-total" style="font-size:20px; font-weight:800;">0</span> FCFA</h4>
       </div>
       <div class="form-group">
         <label>1. Choisissez votre opérateur</label>
@@ -237,16 +581,16 @@
           <option value="Moov">Moov Money</option>
         </select>
       </div>
-      <div style="background:#FFFBEB; border:1px dashed var(--orange); padding:14px; border-radius:12px; margin-bottom:18px; font-size:13px;">
+      <div style="background:#FFFDF5; border:1px dashed var(--orange); padding:14px; border-radius:12px; margin-bottom:20px; font-size:13px;">
         ℹ️ <strong>Instructions :</strong> Envoyez le montant exact sur le numéro officiel MIDOUNOU : 
-        <strong style="font-size:15px; color:var(--brun); display:block; margin-top:6px;" id="momo-target-number">Chargement...</strong>
+        <strong style="font-size:16px; color:var(--brun); display:block; margin-top:6px; font-family:'Poppins';" id="momo-target-number">Chargement...</strong>
       </div>
       <div class="form-group">
         <label>2. Saisissez la Référence de transaction SMS</label>
         <input type="text" id="pay-reference" placeholder="Ex: TXN8493029202">
       </div>
       <button class="btn btn-orange" onclick="submitOrderToSupabase()">✅ Valider ma commande</button>
-      <button class="btn" onclick="closePaymentSheet()" style="background:transparent; color:var(--brun-clair); margin-top:8px;">Annuler</button>
+      <button class="btn" onclick="closePaymentSheet()" style="background:transparent; color:var(--brun-clair); margin-top:8px; box-shadow:none;">Annuler</button>
     </div>
   </div>
 
@@ -260,9 +604,16 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session } } = await _supabase.auth.getSession();
-      if (session?.user) setupUserSession(session.user);
+      if (session?.user) await setupUserSession(session.user);
       await fetchGlobalConfig();
       listenToConfigRealtime();
+      
+      // Suppression de l'écran de chargement initial dès que tout est synchronisé
+      const loader = document.getElementById('app-loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 400);
+      }
     });
 
     function toggleAuthBoxes(showLogin) {
@@ -334,13 +685,11 @@
     function renderGlobalConfigUI() {
       if(!globalConfig) return;
       
-      // Mise à jour des points de livraison
       const sites = globalConfig.delivery_sites ? globalConfig.delivery_sites.split(',') : [];
       const siteSelect = document.getElementById('order-site-select');
       siteSelect.innerHTML = '';
       sites.forEach(s => siteSelect.innerHTML += `<option value="${s}">${s}</option>`);
 
-      // Mise à jour des formules dans l'interface
       if(globalConfig.formulas_data) {
         const fData = JSON.parse(globalConfig.formulas_data);
         const formulaSelect = document.getElementById('order-formula-select');
@@ -358,9 +707,9 @@
           
           const cardHtml = `
             <div class="formula-card" onclick="switchTab('commander')">
-              <strong style="color:var(--brun);">${name}</strong>
-              <div style="color:var(--orange); font-weight:800; margin:6px 0;">${f.price} F</div>
-              <small style="color:var(--brun-clair); font-size:12px;">${f.desc}</small>
+              <strong style="color:var(--brun); display:block; font-size:15px;">${name}</strong>
+              <div style="color:var(--orange); font-weight:800; font-size:16px; margin:6px 0; font-family:'Poppins';">${f.price} F</div>
+              <small style="color:var(--brun-clair); font-size:12px; line-height:1.4; display:block;">${f.desc}</small>
             </div>
           `;
           containerHome.innerHTML += cardHtml;
@@ -384,7 +733,7 @@
         let diff = targetTime - now;
         if (diff <= 0) {
           isOrderingClosed = true;
-          document.getElementById('countdown-timer').innerHTML = "<span style='color:var(--rouge);'>Clôturée</span>";
+          document.getElementById('countdown-timer').innerHTML = "<span style='color:var(--rouge); font-weight:700;'>Clôturée</span>";
           document.getElementById('closed-order-alert').style.display = 'block';
           document.getElementById('btn-trigger-payment').disabled = true;
           document.querySelectorAll('.meal-card').forEach(c => c.classList.add('disabled'));
@@ -403,13 +752,13 @@
       availableMeals = meals || [];
       const gridDej = document.getElementById('grid-dejeuner'), gridDin = document.getElementById('grid-diner');
       gridDej.innerHTML = ''; gridDin.innerHTML = '';
-      meals.forEach(meal => {
+      availableMeals.forEach(meal => {
         const cardHtml = `
           <div class="meal-card ${isOrderingClosed ? 'disabled' : ''}" id="meal-card-${meal.id}" onclick="selectMeal(${meal.id}, '${meal.type}')">
             <div class="meal-img-wrapper" style="${meal.image_url ? `background-image:url('${meal.image_url}')` : ''}">${!meal.image_url ? meal.emoji : ''}</div>
             <div class="meal-details-box">
-              <strong style="display:block; font-size:14px; color:var(--brun);">${meal.name}</strong>
-              <div style="display:flex; justify-content:space-between; margin-top:6px;">
+              <strong style="display:block; font-size:13px; color:var(--noir); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${meal.name}</strong>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
                 <small style="color:var(--brun-clair); font-size:11px;">${meal.calories || 0} Cal</small>
                 <div style="color:var(--orange); font-weight:700; font-size:13px;">${meal.price} F</div>
               </div>
@@ -483,16 +832,20 @@
       const histList = document.getElementById('history-list');
       histList.innerHTML = '';
       document.getElementById('hist-stat-count').innerText = orders?.length || 0;
+      
+      let spent = 0;
       orders?.forEach(o => {
+        spent += o.total_amount || 0;
         histList.innerHTML += `
           <div class="order-item">
             <span class="status-pill status-attente">${o.status}</span>
-            <strong style="color:var(--brun);">${o.id}</strong>
-            <div style="font-size:13px; margin:6px 0;">${o.repas_dejeuner ? `☀️ ${o.repas_dejeuner}` : ''} ${o.repas_diner ? `<br>🌙 ${o.repas_diner}` : ''}</div>
-            <small>📍 ${o.delivery_site} • ${o.total_amount} F</small>
+            <strong style="color:var(--brun); font-size:13px; font-family:'Poppins';">Cmd #${o.id.toString().substring(0,8)}</strong>
+            <div style="font-size:13px; margin:8px 0; color:var(--noir); line-height:1.4;">${o.repas_dejeuner ? `☀️ ${o.repas_dejeuner}` : ''} ${o.repas_diner ? `<br>🌙 ${o.repas_diner}` : ''}</div>
+            <small style="color:var(--brun-clair); font-weight:500;">📍 ${o.delivery_site} • <span style="color:var(--orange); font-weight:700;">${o.total_amount} F</span></small>
           </div>
         `;
       });
+      document.getElementById('hist-stat-spent').innerText = spent + " F";
     }
 
     function switchTab(tabId) {
